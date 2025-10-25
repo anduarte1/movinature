@@ -15,7 +15,6 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     async session({ session, user }) {
       if (session.user) {
         session.user.id = user.id
-        // @ts-expect-error - Prisma types are incompatible with NextAuth
         session.user.role = user.role
       }
       return session
