@@ -20,9 +20,9 @@ export default async function BookingsPage() {
       userId: session.user.id,
     },
     include: {
-      activity: {
+      Activity: {
         include: {
-          category: true,
+          Category: true,
         },
       },
     },
@@ -65,8 +65,8 @@ export default async function BookingsPage() {
                     {/* Activity Image */}
                     <div className="relative h-32 w-48 rounded-lg overflow-hidden flex-shrink-0">
                       <Image
-                        src={booking.activity.images[0] || "/placeholder.jpg"}
-                        alt={booking.activity.title}
+                        src={booking.Activity.images[0] || "/placeholder.jpg"}
+                        alt={booking.Activity.title}
                         fill
                         className="object-cover"
                       />
@@ -77,14 +77,14 @@ export default async function BookingsPage() {
                       <div className="flex items-start justify-between">
                         <div>
                           <Link
-                            href={`/activities/${booking.activity.id}`}
+                            href={`/activities/${booking.Activity.id}`}
                             className="text-xl font-semibold hover:underline"
                           >
-                            {booking.activity.title}
+                            {booking.Activity.title}
                           </Link>
                           <div className="flex items-center gap-2 mt-1">
                             <Badge variant="outline">
-                              {booking.activity.category.name}
+                              {booking.Activity.Category.name}
                             </Badge>
                             <Badge className={getStatusColor(booking.status)}>
                               {booking.status}
@@ -113,7 +113,7 @@ export default async function BookingsPage() {
                         </div>
                         <div className="flex items-center gap-2 text-muted-foreground">
                           <MapPin className="h-4 w-4" />
-                          <span>{booking.activity.location}</span>
+                          <span>{booking.Activity.location}</span>
                         </div>
                         <div className="flex items-center gap-2 text-muted-foreground">
                           <Clock className="h-4 w-4" />
@@ -123,7 +123,7 @@ export default async function BookingsPage() {
 
                       <div className="flex gap-2 pt-2">
                         <Button variant="outline" size="sm" asChild>
-                          <Link href={`/activities/${booking.activity.id}`}>
+                          <Link href={`/activities/${booking.Activity.id}`}>
                             View Activity
                           </Link>
                         </Button>
