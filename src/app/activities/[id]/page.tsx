@@ -138,7 +138,7 @@ export default async function ActivityPage({ params }: ActivityPageProps) {
       },
       createdAt: review.createdAt,
     })),
-    _count: { reviews: activityData.Review.length },
+    _count: { Review: activityData.Review.length },
   }
 
   // Calculate average rating
@@ -168,7 +168,7 @@ export default async function ActivityPage({ params }: ActivityPageProps) {
                         <span className="font-bold text-foreground text-lg">
                           {avgRating.toFixed(1)}
                         </span>
-                        <span className="text-gray-600">({activity._count.reviews} reviews)</span>
+                        <span className="text-gray-600">({activity._count.Review} reviews)</span>
                       </div>
                     )}
                     <Separator orientation="vertical" className="h-5" />
@@ -282,7 +282,7 @@ export default async function ActivityPage({ params }: ActivityPageProps) {
                 <CardHeader>
                   <CardTitle className="text-2xl flex items-center gap-2">
                     Reviews
-                    <span className="text-lg font-normal text-muted-foreground">({activity._count.reviews})</span>
+                    <span className="text-lg font-normal text-muted-foreground">({activity._count.Review})</span>
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-6">
@@ -331,7 +331,7 @@ export default async function ActivityPage({ params }: ActivityPageProps) {
               capacity={activity.capacity}
               duration={activity.duration}
               avgRating={avgRating}
-              reviewCount={activity._count.reviews}
+              reviewCount={activity._count.Review}
               address={activity.address}
             />
           </div>

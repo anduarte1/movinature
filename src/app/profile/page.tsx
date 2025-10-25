@@ -20,9 +20,9 @@ export default async function ProfilePage() {
     include: {
       _count: {
         select: {
-          bookings: true,
+          Booking: true,
           activities: true,
-          reviews: true,
+          Review: true,
           favorites: true,
         },
       },
@@ -90,7 +90,7 @@ export default async function ProfilePage() {
         <div className="grid md:grid-cols-4 gap-4 mb-8">
           <Card>
             <CardContent className="pt-6 text-center">
-              <div className="text-3xl font-bold mb-1">{user._count.bookings}</div>
+              <div className="text-3xl font-bold mb-1">{user._count.Booking}</div>
               <div className="text-sm text-muted-foreground">Bookings</div>
             </CardContent>
           </Card>
@@ -104,7 +104,7 @@ export default async function ProfilePage() {
 
           <Card>
             <CardContent className="pt-6 text-center">
-              <div className="text-3xl font-bold mb-1">{user._count.reviews}</div>
+              <div className="text-3xl font-bold mb-1">{user._count.Review}</div>
               <div className="text-sm text-muted-foreground">Reviews</div>
             </CardContent>
           </Card>

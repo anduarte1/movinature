@@ -39,8 +39,8 @@ export default async function HostDashboard() {
       },
       _count: {
         select: {
-          bookings: true,
-          reviews: true,
+          Booking: true,
+          Review: true,
         },
       },
     },
@@ -51,7 +51,7 @@ export default async function HostDashboard() {
 
   // Calculate stats
   const totalActivities = activities.length
-  const totalBookings = activities.reduce((sum, act) => sum + act._count.bookings, 0)
+  const totalBookings = activities.reduce((sum, act) => sum + act._count.Booking, 0)
   const totalRevenue = activities.reduce(
     (sum, act) =>
       sum + act.Booking.reduce((bookingSum, booking) => bookingSum + booking.totalPrice, 0),
@@ -176,13 +176,13 @@ export default async function HostDashboard() {
                         <div className="flex items-center gap-6 text-sm text-muted-foreground mb-3">
                           <div className="flex items-center gap-1">
                             <Users className="h-4 w-4" />
-                            <span>{activity._count.bookings} bookings</span>
+                            <span>{activity._count.Booking} bookings</span>
                           </div>
                           {activity.Review.length > 0 && (
                             <div className="flex items-center gap-1">
                               <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
                               <span>{activityRating.toFixed(1)}</span>
-                              <span>({activity._count.reviews})</span>
+                              <span>({activity._count.Review})</span>
                             </div>
                           )}
                         </div>
