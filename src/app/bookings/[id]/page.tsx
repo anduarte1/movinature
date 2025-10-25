@@ -130,8 +130,8 @@ export default async function BookingConfirmationPage({
                 {/* Activity Image */}
                 <div className="relative h-48 w-64 rounded-xl overflow-hidden flex-shrink-0">
                   <Image
-                    src={booking.activity.images[0] || "/placeholder.jpg"}
-                    alt={booking.activity.title}
+                    src={booking.Activity.images[0] || "/placeholder.jpg"}
+                    alt={booking.Activity.title}
                     fill
                     className="object-cover"
                   />
@@ -140,12 +140,12 @@ export default async function BookingConfirmationPage({
                 {/* Activity Info */}
                 <div className="flex-1 space-y-4">
                   <div>
-                    <h3 className="text-2xl font-bold mb-2">{booking.activity.title}</h3>
+                    <h3 className="text-2xl font-bold mb-2">{booking.Activity.title}</h3>
                     <Badge variant="outline" className="mb-3">
-                      {booking.activity.category.name}
+                      {booking.Activity.Category.name}
                     </Badge>
                     <p className="text-gray-600 line-clamp-3">
-                      {booking.activity.description}
+                      {booking.Activity.description}
                     </p>
                   </div>
 

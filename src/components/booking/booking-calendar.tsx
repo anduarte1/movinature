@@ -57,7 +57,7 @@ export function BookingCalendar({ activityId, price, capacity, onBook }: Booking
         throw new Error("Failed to create payment intent")
       }
 
-      const { clientSecret, paymentIntentId } = await response.json()
+      const { paymentIntentId } = await response.json()
 
       // For demo purposes, simulate successful payment
       // In production, redirect to Stripe Checkout or use Stripe Elements
