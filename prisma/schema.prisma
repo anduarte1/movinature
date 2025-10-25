@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -13,52 +7,141 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// NextAuth models
 model Account {
-  id                String  @id @default(cuid())
+  id                String  @id
   userId            String
   type              String
   provider          String
   providerAccountId String
-  refresh_token     String? @db.Text
-  access_token      String? @db.Text
+  refresh_token     String?
+  access_token      String?
   expires_at        Int?
   token_type        String?
   scope             String?
-  id_token          String? @db.Text
+  id_token          String?
   session_state     String?
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  User              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
 }
 
+model Activity {
+  id           String         @id
+  title        String
+  description  String
+  location     String
+  address      String?
+  latitude     Float?
+  longitude    Float?
+  price        Float
+  duration     Int
+  minAge       Int
+  maxAge       Int
+  capacity     Int
+  images       String[]
+  featured     Boolean        @default(false)
+  active       Boolean        @default(true)
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime
+  hostId       String
+  categoryId   String
+  Category     Category       @relation(fields: [categoryId], references: [id])
+  User         User           @relation(fields: [hostId], references: [id], onDelete: Cascade)
+  Availability Availability[]
+  Booking      Booking[]
+  Favorite     Favorite[]
+  Review       Review[]
+}
+
+model Availability {
+  id         String   @id
+  activityId String
+  date       DateTime
+  startTime  String
+  endTime    String
+  capacity   Int
+  booked     Int      @default(0)
+  createdAt  DateTime @default(now())
+  Activity   Activity @relation(fields: [activityId], references: [id], onDelete: Cascade)
+
+  @@unique([activityId, date, startTime])
+}
+
+model Booking {
+  id              String        @id
+  activityId      String
+  userId          String
+  date            DateTime
+  startTime       String
+  endTime         String
+  participants    Int
+  totalPrice      Float
+  status          BookingStatus @default(PENDING)
+  paymentIntentId String?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime
+  Activity        Activity      @relation(fields: [activityId], references: [id], onDelete: Cascade)
+  User            User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Category {
+  id       String     @id
+  name     String     @unique
+  slug     String     @unique
+  icon     String?
+  Activity Activity[]
+}
+
+model Favorite {
+  id         String   @id
+  userId     String
+  activityId String
+  createdAt  DateTime @default(now())
+  Activity   Activity @relation(fields: [activityId], references: [id], onDelete: Cascade)
+  User       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, activityId])
+}
+
+model Review {
+  id         String   @id
+  activityId String
+  userId     String
+  rating     Int
+  comment    String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime
+  Activity   Activity @relation(fields: [activityId], references: [id], onDelete: Cascade)
+  User       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([activityId, userId])
+}
+
 model Session {
-  id           String   @id @default(cuid())
+  id           String   @id
   sessionToken String   @unique
   userId       String
   expires      DateTime
-  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  User         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model User {
-  id            String    @id @default(cuid())
+  id            String     @id
   name          String?
-  email         String?   @unique
+  email         String?    @unique
   emailVerified DateTime?
   image         String?
-  bio           String?   @db.Text
+  bio           String?
   phone         String?
-  role          UserRole  @default(GUEST)
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-
-  accounts      Account[]
-  sessions      Session[]
-  activities    Activity[]
-  bookings      Booking[]
-  reviews       Review[]
-  favorites     Favorite[]
+  role          UserRole   @default(GUEST)
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime
+  Account       Account[]
+  Activity      Activity[]
+  Booking       Booking[]
+  Favorite      Favorite[]
+  Review        Review[]
+  Session       Session[]
 }
 
 model VerificationToken {
@@ -69,109 +152,15 @@ model VerificationToken {
   @@unique([identifier, token])
 }
 
-// Activity models
-model Activity {
-  id          String   @id @default(cuid())
-  title       String
-  description String   @db.Text
-  location    String
-  address     String?
-  latitude    Float?
-  longitude   Float?
-  price       Float
-  duration    Int // in minutes
-  minAge      Int
-  maxAge      Int
-  capacity    Int
-  images      String[] // Array of image URLs
-  featured    Boolean  @default(false)
-  active      Boolean  @default(true)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  hostId     String
-  host       User       @relation(fields: [hostId], references: [id], onDelete: Cascade)
-  categoryId String
-  category   Category   @relation(fields: [categoryId], references: [id])
-  bookings   Booking[]
-  reviews    Review[]
-  favorites  Favorite[]
-  availabilities Availability[]
-}
-
-model Category {
-  id         String     @id @default(cuid())
-  name       String     @unique
-  slug       String     @unique
-  icon       String?
-  activities Activity[]
-}
-
-model Availability {
-  id         String   @id @default(cuid())
-  activityId String
-  activity   Activity @relation(fields: [activityId], references: [id], onDelete: Cascade)
-  date       DateTime
-  startTime  String // "09:00"
-  endTime    String // "11:00"
-  capacity   Int
-  booked     Int      @default(0)
-  createdAt  DateTime @default(now())
-
-  @@unique([activityId, date, startTime])
-}
-
-model Booking {
-  id         String        @id @default(cuid())
-  activityId String
-  activity   Activity      @relation(fields: [activityId], references: [id], onDelete: Cascade)
-  userId     String
-  user       User          @relation(fields: [userId], references: [id], onDelete: Cascade)
-  date       DateTime
-  startTime  String
-  endTime    String
-  participants Int
-  totalPrice Float
-  status     BookingStatus @default(PENDING)
-  createdAt  DateTime      @default(now())
-  updatedAt  DateTime      @updatedAt
-}
-
-model Review {
-  id         String   @id @default(cuid())
-  activityId String
-  activity   Activity @relation(fields: [activityId], references: [id], onDelete: Cascade)
-  userId     String
-  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  rating     Int // 1-5
-  comment    String?  @db.Text
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-
-  @@unique([activityId, userId])
-}
-
-model Favorite {
-  id         String   @id @default(cuid())
-  userId     String
-  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  activityId String
-  activity   Activity @relation(fields: [activityId], references: [id], onDelete: Cascade)
-  createdAt  DateTime @default(now())
-
-  @@unique([userId, activityId])
-}
-
-// Enums
-enum UserRole {
-  GUEST
-  HOST
-  ADMIN
-}
-
 enum BookingStatus {
   PENDING
   CONFIRMED
   CANCELLED
   COMPLETED
+}
+
+enum UserRole {
+  GUEST
+  HOST
+  ADMIN
 }

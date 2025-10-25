@@ -208,7 +208,7 @@ export default async function HostDashboard() {
             ) : (
               <div className="text-center py-12">
                 <p className="text-muted-foreground mb-4">
-                  You haven't created any activities yet.
+                  You haven&apos;t created any activities yet.
                 </p>
                 <Button asChild>
                   <Link href="/host/new">

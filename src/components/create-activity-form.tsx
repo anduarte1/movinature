@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { ImageUpload } from "@/components/upload/image-upload"
 
 interface CreateActivityFormProps {
   categories: Array<{
@@ -21,6 +22,7 @@ interface CreateActivityFormProps {
 export function CreateActivityForm({ categories, userId }: CreateActivityFormProps) {
   const router = useRouter()
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [images, setImages] = useState<string[]>([])
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -38,7 +40,7 @@ export function CreateActivityForm({ categories, userId }: CreateActivityFormPro
       maxAge: parseInt(formData.get("maxAge") as string),
       capacity: parseInt(formData.get("capacity") as string),
       categoryId: formData.get("categoryId"),
-      images: ["/placeholder.jpg"], // Default placeholder - implement image upload later
+      images: images.length > 0 ? images : ["/placeholder.jpg"],
       hostId: userId,
     }
 
@@ -52,7 +54,7 @@ export function CreateActivityForm({ categories, userId }: CreateActivityFormPro
       })
 
       if (response.ok) {
-        const activity = await response.json()
+        await response.json()
         router.push(`/host`)
       } else {
         const error = await response.json()
@@ -197,6 +199,20 @@ export function CreateActivityForm({ categories, userId }: CreateActivityFormPro
               min="1"
               placeholder="10"
               required
+            />
+          </div>
+
+          {/* Image Upload */}
+          <div>
+            <Label>Activity Images</Label>
+            <p className="text-sm text-muted-foreground mb-3">
+              Upload up to 10 images to showcase your activity
+            </p>
+            <ImageUpload
+              value={images}
+              onChange={setImages}
+              maxFiles={10}
+              disabled={isSubmitting}
             />
           </div>
 

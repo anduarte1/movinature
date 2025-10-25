@@ -1,4 +1,5 @@
 import { PrismaClient } from '@prisma/client'
+import { randomUUID } from 'crypto'
 
 const prisma = new PrismaClient()
 
@@ -7,16 +8,16 @@ async function main() {
 
   // Seed categories
   const categories = [
-    { name: 'Hiking', slug: 'hiking', icon: '🥾' },
-    { name: 'Camping', slug: 'camping', icon: '⛺' },
-    { name: 'Water Sports', slug: 'water-sports', icon: '🏄' },
-    { name: 'Climbing', slug: 'climbing', icon: '🧗' },
-    { name: 'Cycling', slug: 'cycling', icon: '🚴' },
-    { name: 'Wildlife Watching', slug: 'wildlife', icon: '🦅' },
-    { name: 'Nature Walks', slug: 'nature-walks', icon: '🌳' },
-    { name: 'Adventure Sports', slug: 'adventure', icon: '🪂' },
-    { name: 'Team Sports', slug: 'team-sports', icon: '⚽' },
-    { name: 'Yoga & Wellness', slug: 'yoga-wellness', icon: '🧘' },
+    { name: 'Hiking', slug: 'hiking', icon: '🥾', id: randomUUID() },
+    { name: 'Camping', slug: 'camping', icon: '⛺', id: randomUUID() },
+    { name: 'Water Sports', slug: 'water-sports', icon: '🏄', id: randomUUID() },
+    { name: 'Climbing', slug: 'climbing', icon: '🧗', id: randomUUID() },
+    { name: 'Cycling', slug: 'cycling', icon: '🚴', id: randomUUID() },
+    { name: 'Wildlife Watching', slug: 'wildlife', icon: '🦅', id: randomUUID() },
+    { name: 'Nature Walks', slug: 'nature-walks', icon: '🌳', id: randomUUID() },
+    { name: 'Adventure Sports', slug: 'adventure', icon: '🪂', id: randomUUID() },
+    { name: 'Team Sports', slug: 'team-sports', icon: '⚽', id: randomUUID() },
+    { name: 'Yoga & Wellness', slug: 'yoga-wellness', icon: '🧘', id: randomUUID() },
   ]
 
   for (const category of categories) {

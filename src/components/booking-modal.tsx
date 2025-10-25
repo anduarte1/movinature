@@ -29,7 +29,6 @@ export function BookingModal({
   activityId,
   activityTitle,
   price,
-  duration,
 }: BookingModalProps) {
   const router = useRouter()
   const [date, setDate] = useState<Date | undefined>(undefined)

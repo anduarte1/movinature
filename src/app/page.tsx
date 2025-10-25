@@ -1,148 +1,132 @@
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
 import { ActivityCard } from "@/components/activity-card"
-import { Search, Sparkles, TreePine, Heart } from "lucide-react"
+import { TreePine } from "lucide-react"
+import { HeroSection } from "@/components/home/hero-section"
+import { FeaturesSection } from "@/components/home/features-section"
+import { CtaSection } from "@/components/home/cta-section"
+import { FadeIn } from "@/components/animations/fade-in"
 import { prisma } from "@/lib/prisma"
+import type { Metadata } from "next"
+
+export const metadata: Metadata = {
+  title: "Home",
+  description: "Book amazing outdoor activities and physical experiences for kids and families. Browse hiking, camping, water sports, climbing, and more nature-based adventures.",
+  openGraph: {
+    title: "movinature - Discover Nature's Playground",
+    description: "Book amazing outdoor activities and physical experiences for kids and families.",
+    url: "https://movinature.com",
+  },
+}
 
 export default async function Home() {
-  // Fetch featured activities
+  // Fetch featured activities from database
   const activities = await prisma.activity.findMany({
-    where: { active: true, featured: true },
+    where: {
+      active: true,
+      featured: true,
+    },
     include: {
-      category: true,
-      reviews: {
+      Category: true,
+      Review: {
         select: {
           rating: true,
         },
       },
+    },
+    orderBy: {
+      createdAt: 'desc',
     },
     take: 6,
   })
 
   // Calculate average rating for each activity
   const activitiesWithRating = activities.map((activity) => {
-    const totalRating = activity.reviews.reduce((sum, review) => sum + review.rating, 0)
-    const avgRating = activity.reviews.length > 0 ? totalRating / activity.reviews.length : 0
+    const totalRating = activity.Review.reduce((sum, review) => sum + review.rating, 0)
+    const avgRating = activity.Review.length > 0 ? totalRating / activity.Review.length : 0
     return {
-      ...activity,
+      id: activity.id,
+      title: activity.title,
+      description: activity.description,
+      location: activity.location,
+      price: activity.price,
+      duration: activity.duration,
+      capacity: activity.capacity,
+      images: activity.images,
+      category: {
+        id: activity.Category.id,
+        name: activity.Category.name,
+        slug: activity.Category.slug,
+        icon: activity.Category.icon,
+      },
       rating: avgRating,
-      reviewCount: activity.reviews.length,
+      reviewCount: activity.Review.length,
+      active: activity.active,
+      featured: activity.featured,
     }
   })
 
   return (
-    <div>
+    <div className="min-h-screen">
       {/* Hero Section */}
-      <section className="bg-gradient-to-br from-green-50 to-blue-50 py-20">
-        <div className="container mx-auto px-4">
-          <div className="max-w-3xl mx-auto text-center">
-            <h1 className="text-5xl font-bold mb-6 bg-gradient-to-r from-green-600 to-blue-600 bg-clip-text text-transparent">
-              Discover Nature's Playground
-            </h1>
-            <p className="text-xl text-muted-foreground mb-8">
-              Book amazing outdoor activities and physical experiences for kids and families
-            </p>
-            <div className="flex gap-4 max-w-2xl mx-auto">
-              <div className="relative flex-1">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-5 w-5" />
-                <Input
-                  placeholder="Search activities, locations..."
-                  className="pl-10 h-12"
-                />
-              </div>
-              <Button size="lg" className="h-12">
-                Search
-              </Button>
-            </div>
-          </div>
-        </div>
-      </section>
+      <HeroSection />
 
       {/* Features Section */}
-      <section className="py-16 border-b">
-        <div className="container mx-auto px-4">
-          <div className="grid md:grid-cols-3 gap-8 text-center">
-            <div className="flex flex-col items-center">
-              <div className="h-16 w-16 rounded-full bg-green-100 flex items-center justify-center mb-4">
-                <TreePine className="h-8 w-8 text-green-600" />
-              </div>
-              <h3 className="font-semibold text-lg mb-2">Nature Activities</h3>
-              <p className="text-muted-foreground">
-                Hiking, camping, nature walks and outdoor adventures
-              </p>
-            </div>
-            <div className="flex flex-col items-center">
-              <div className="h-16 w-16 rounded-full bg-blue-100 flex items-center justify-center mb-4">
-                <Sparkles className="h-8 w-8 text-blue-600" />
-              </div>
-              <h3 className="font-semibold text-lg mb-2">Physical Activities</h3>
-              <p className="text-muted-foreground">
-                Sports, climbing, swimming and active play for all ages
-              </p>
-            </div>
-            <div className="flex flex-col items-center">
-              <div className="h-16 w-16 rounded-full bg-purple-100 flex items-center justify-center mb-4">
-                <Heart className="h-8 w-8 text-purple-600" />
-              </div>
-              <h3 className="font-semibold text-lg mb-2">Family Friendly</h3>
-              <p className="text-muted-foreground">
-                Safe, vetted activities perfect for kids and families
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
+      <FeaturesSection />
 
       {/* Featured Activities */}
-      <section className="py-16">
+      <section className="py-20 bg-gradient-to-b from-white to-gray-50">
         <div className="container mx-auto px-4">
-          <div className="flex items-center justify-between mb-8">
-            <h2 className="text-3xl font-bold">Featured Activities</h2>
-            <Button variant="outline" asChild>
-              <Link href="/activities">View All</Link>
-            </Button>
-          </div>
+          <FadeIn delay={100}>
+            <div className="flex items-center justify-between mb-12">
+              <div>
+                <h2 className="text-4xl font-bold mb-2 bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
+                  Featured Activities
+                </h2>
+                <p className="text-gray-600">Handpicked adventures for your family</p>
+              </div>
+              <Button variant="outline" size="lg" className="border-2 hover:border-green-500 hover:text-green-600 hover:scale-105 rounded-xl transition-all" asChild>
+                <Link href="/activities">View All</Link>
+              </Button>
+            </div>
+          </FadeIn>
+
           {activitiesWithRating.length > 0 ? (
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {activitiesWithRating.map((activity) => (
-                <ActivityCard
-                  key={activity.id}
-                  id={activity.id}
-                  title={activity.title}
-                  location={activity.location}
-                  price={activity.price}
-                  duration={activity.duration}
-                  capacity={activity.capacity}
-                  images={activity.images}
-                  category={activity.category}
-                  rating={activity.rating}
-                  reviewCount={activity.reviewCount}
-                />
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {activitiesWithRating.map((activity, index) => (
+                <FadeIn key={activity.id} delay={200 + index * 100} direction="up">
+                  <ActivityCard
+                    id={activity.id}
+                    title={activity.title}
+                    location={activity.location}
+                    price={activity.price}
+                    duration={activity.duration}
+                    capacity={activity.capacity}
+                    images={activity.images}
+                    category={activity.category}
+                    rating={activity.rating}
+                    reviewCount={activity.reviewCount}
+                    featured={activity.featured}
+                    isNew={index === 0 || index === 1}
+                  />
+                </FadeIn>
               ))}
             </div>
           ) : (
-            <div className="text-center py-12">
-              <p className="text-muted-foreground">
-                No featured activities yet. Check back soon!
-              </p>
-            </div>
+            <FadeIn delay={200}>
+              <div className="text-center py-20 bg-white rounded-2xl border-2 border-dashed border-gray-200">
+                <TreePine className="h-16 w-16 text-gray-300 mx-auto mb-4" />
+                <p className="text-gray-500 text-lg">
+                  No featured activities yet. Check back soon!
+                </p>
+              </div>
+            </FadeIn>
           )}
         </div>
       </section>
 
       {/* CTA Section */}
-      <section className="bg-primary text-primary-foreground py-20">
-        <div className="container mx-auto px-4 text-center">
-          <h2 className="text-3xl font-bold mb-4">Ready to Start Your Adventure?</h2>
-          <p className="text-lg mb-8 opacity-90">
-            Join thousands of families discovering nature together
-          </p>
-          <Button size="lg" variant="secondary" asChild>
-            <Link href="/activities">Browse Activities</Link>
-          </Button>
-        </div>
-      </section>
+      <CtaSection />
     </div>
   )
 }

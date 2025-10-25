@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
-import { Mail, Calendar, User as UserIcon } from "lucide-react"
+import { Mail, Calendar } from "lucide-react"
 import Link from "next/link"
 
 export default async function ProfilePage() {

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server"
 import { auth } from "@/auth"
 import { prisma } from "@/lib/prisma"
 import { z } from "zod"
+import { randomUUID } from "crypto"
 
 const activitySchema = z.object({
   title: z.string().min(1),
@@ -43,11 +44,13 @@ export async function POST(request: NextRequest) {
     const activity = await prisma.activity.create({
       data: {
         ...validatedData,
+        id: randomUUID(),
         active: true,
         featured: false,
+        updatedAt: new Date(),
       },
       include: {
-        category: true,
+        Category: true,
       },
     })
 
@@ -55,7 +58,7 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
-        { message: "Invalid activity data", errors: error.errors },
+        { message: "Invalid activity data", errors: error.issues },
         { status: 400 }
       )
     }

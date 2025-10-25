@@ -151,7 +151,7 @@ export default async function BookingsPage() {
             </CardHeader>
             <CardContent className="text-center py-8">
               <p className="text-muted-foreground mb-4">
-                You haven't booked any activities yet. Start exploring!
+                You haven&apos;t booked any activities yet. Start exploring!
               </p>
               <Button asChild>
                 <Link href="/activities">Browse Activities</Link>

@@ -52,7 +52,7 @@ export default async function FavoritesPage() {
         <div className="mb-8">
           <h1 className="text-4xl font-bold mb-2">My Favorites</h1>
           <p className="text-muted-foreground">
-            Activities you've saved for later
+            Activities you&apos;ve saved for later
           </p>
         </div>
 
@@ -82,7 +82,7 @@ export default async function FavoritesPage() {
             <CardContent className="text-center py-8">
               <Heart className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
               <p className="text-muted-foreground mb-4">
-                You haven't saved any activities yet. Start exploring and save your favorites!
+                You haven&apos;t saved any activities yet. Start exploring and save your favorites!
               </p>
               <Button asChild>
                 <Link href="/activities">Browse Activities</Link>
