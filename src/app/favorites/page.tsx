@@ -19,10 +19,10 @@ export default async function FavoritesPage() {
       userId: session.user.id,
     },
     include: {
-      activity: {
+      Activity: {
         include: {
-          category: true,
-          reviews: {
+          Category: true,
+          Review: {
             select: {
               rating: true,
             },
@@ -37,12 +37,12 @@ export default async function FavoritesPage() {
 
   // Calculate ratings
   const favoritesWithRating = favorites.map((fav) => {
-    const totalRating = fav.activity.reviews.reduce((sum, review) => sum + review.rating, 0)
-    const avgRating = fav.activity.reviews.length > 0 ? totalRating / fav.activity.reviews.length : 0
+    const totalRating = fav.Activity.Review.reduce((sum, review) => sum + review.rating, 0)
+    const avgRating = fav.Activity.Review.length > 0 ? totalRating / fav.Activity.Review.length : 0
     return {
-      ...fav.activity,
+      ...fav.Activity,
       rating: avgRating,
-      reviewCount: fav.activity.reviews.length,
+      reviewCount: fav.Activity.Review.length,
     }
   })
 
@@ -68,7 +68,7 @@ export default async function FavoritesPage() {
                 duration={activity.duration}
                 capacity={activity.capacity}
                 images={activity.images}
-                category={activity.category}
+                category={activity.Category}
                 rating={activity.rating}
                 reviewCount={activity.reviewCount}
               />
