@@ -211,22 +211,22 @@ export default async function BookingConfirmationPage({
             <CardContent className="p-6">
               <div className="flex items-center gap-4">
                 <div className="relative h-16 w-16 rounded-full overflow-hidden bg-gradient-to-br from-green-500 to-emerald-600 flex items-center justify-center">
-                  {booking.Activity.host.image ? (
+                  {booking.Activity.User.image ? (
                     <Image
-                      src={booking.Activity.host.image}
-                      alt={booking.Activity.host.name || "Host"}
+                      src={booking.Activity.User.image}
+                      alt={booking.Activity.User.name || "Host"}
                       fill
                       className="object-cover"
                     />
                   ) : (
                     <span className="text-2xl font-bold text-white">
-                      {booking.Activity.host.name?.charAt(0) || "H"}
+                      {booking.Activity.User.name?.charAt(0) || "H"}
                     </span>
                   )}
                 </div>
                 <div>
-                  <p className="font-semibold text-lg">{booking.Activity.host.name}</p>
-                  <p className="text-sm text-gray-600">{booking.Activity.host.email}</p>
+                  <p className="font-semibold text-lg">{booking.Activity.User.name}</p>
+                  <p className="text-sm text-gray-600">{booking.Activity.User.email}</p>
                 </div>
               </div>
             </CardContent>
