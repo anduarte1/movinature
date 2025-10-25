@@ -21,10 +21,10 @@ export default async function HostDashboard() {
       hostId: session.user.id,
     },
     include: {
-      category: true,
-      bookings: {
+      Category: true,
+      Booking: {
         include: {
-          user: {
+          User: {
             select: {
               name: true,
               email: true,
@@ -32,7 +32,7 @@ export default async function HostDashboard() {
           },
         },
       },
-      reviews: {
+      Review: {
         select: {
           rating: true,
         },
@@ -54,14 +54,14 @@ export default async function HostDashboard() {
   const totalBookings = activities.reduce((sum, act) => sum + act._count.bookings, 0)
   const totalRevenue = activities.reduce(
     (sum, act) =>
-      sum + act.bookings.reduce((bookingSum, booking) => bookingSum + booking.totalPrice, 0),
+      sum + act.Booking.reduce((bookingSum, booking) => bookingSum + booking.totalPrice, 0),
     0
   )
   const avgRating =
     activities.reduce((sum, act) => {
       const actRating =
-        act.reviews.length > 0
-          ? act.reviews.reduce((r, rev) => r + rev.rating, 0) / act.reviews.length
+        act.Review.length > 0
+          ? act.Review.reduce((r, rev) => r + rev.rating, 0) / act.Review.length
           : 0
       return sum + actRating
     }, 0) / (activities.length || 1)
@@ -137,9 +137,9 @@ export default async function HostDashboard() {
               <div className="space-y-4">
                 {activities.map((activity) => {
                   const activityRating =
-                    activity.reviews.length > 0
-                      ? activity.reviews.reduce((sum, rev) => sum + rev.rating, 0) /
-                        activity.reviews.length
+                    activity.Review.length > 0
+                      ? activity.Review.reduce((sum, rev) => sum + rev.rating, 0) /
+                        activity.Review.length
                       : 0
 
                   return (
@@ -161,7 +161,7 @@ export default async function HostDashboard() {
                           <div>
                             <h3 className="font-semibold text-lg">{activity.title}</h3>
                             <div className="flex items-center gap-2 mt-1">
-                              <Badge variant="outline">{activity.category.name}</Badge>
+                              <Badge variant="outline">{activity.Category.name}</Badge>
                               <Badge variant={activity.active ? "default" : "secondary"}>
                                 {activity.active ? "Active" : "Inactive"}
                               </Badge>
@@ -178,7 +178,7 @@ export default async function HostDashboard() {
                             <Users className="h-4 w-4" />
                             <span>{activity._count.bookings} bookings</span>
                           </div>
-                          {activity.reviews.length > 0 && (
+                          {activity.Review.length > 0 && (
                             <div className="flex items-center gap-1">
                               <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
                               <span>{activityRating.toFixed(1)}</span>
