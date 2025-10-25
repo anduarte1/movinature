@@ -21,9 +21,9 @@ export default async function ProfilePage() {
       _count: {
         select: {
           Booking: true,
-          activities: true,
+          Activity: true,
           Review: true,
-          favorites: true,
+          Favorite: true,
         },
       },
     },
@@ -97,7 +97,7 @@ export default async function ProfilePage() {
 
           <Card>
             <CardContent className="pt-6 text-center">
-              <div className="text-3xl font-bold mb-1">{user._count.favorites}</div>
+              <div className="text-3xl font-bold mb-1">{user._count.Favorite}</div>
               <div className="text-sm text-muted-foreground">Favorites</div>
             </CardContent>
           </Card>
@@ -112,7 +112,7 @@ export default async function ProfilePage() {
           {user.role === "HOST" && (
             <Card>
               <CardContent className="pt-6 text-center">
-                <div className="text-3xl font-bold mb-1">{user._count.activities}</div>
+                <div className="text-3xl font-bold mb-1">{user._count.Activity}</div>
                 <div className="text-sm text-muted-foreground">Activities</div>
               </CardContent>
             </Card>
