@@ -24,10 +24,10 @@ export default async function ActivityBookingsPage({
   const activity = await prisma.activity.findUnique({
     where: { id },
     include: {
-      category: true,
-      bookings: {
+      Category: true,
+      Booking: {
         include: {
-          user: {
+          User: {
             select: {
               id: true,
               name: true,
@@ -54,10 +54,10 @@ export default async function ActivityBookingsPage({
 
   // Group bookings by status
   const bookingsByStatus = {
-    pending: activity.bookings.filter((b) => b.status === "PENDING"),
-    confirmed: activity.bookings.filter((b) => b.status === "CONFIRMED"),
-    completed: activity.bookings.filter((b) => b.status === "COMPLETED"),
-    cancelled: activity.bookings.filter((b) => b.status === "CANCELLED"),
+    pending: activity.Booking.filter((b) => b.status === "PENDING"),
+    confirmed: activity.Booking.filter((b) => b.status === "CONFIRMED"),
+    completed: activity.Booking.filter((b) => b.status === "COMPLETED"),
+    cancelled: activity.Booking.filter((b) => b.status === "CANCELLED"),
   }
 
   const getStatusColor = (status: string) => {
@@ -75,7 +75,7 @@ export default async function ActivityBookingsPage({
     }
   }
 
-  const totalRevenue = activity.bookings
+  const totalRevenue = activity.Booking
     .filter((b) => b.status !== "CANCELLED")
     .reduce((sum, booking) => sum + booking.totalPrice, 0)
 
@@ -106,7 +106,7 @@ export default async function ActivityBookingsPage({
             <div className="flex-1">
               <h1 className="text-4xl font-bold mb-2">{activity.title}</h1>
               <div className="flex items-center gap-2 mb-3">
-                <Badge variant="outline">{activity.category.name}</Badge>
+                <Badge variant="outline">{activity.Category.name}</Badge>
                 <Badge variant={activity.active ? "default" : "secondary"}>
                   {activity.active ? "Active" : "Inactive"}
                 </Badge>
@@ -122,7 +122,7 @@ export default async function ActivityBookingsPage({
               <p className="text-sm text-gray-600 mb-1">Total Revenue</p>
               <p className="text-3xl font-bold text-green-600">${totalRevenue.toFixed(2)}</p>
               <p className="text-sm text-gray-500 mt-1">
-                {activity.bookings.filter((b) => b.status !== "CANCELLED").length} bookings
+                {activity.Booking.filter((b) => b.status !== "CANCELLED").length} bookings
               </p>
             </div>
           </div>
@@ -181,9 +181,9 @@ export default async function ActivityBookingsPage({
             <CardTitle className="text-2xl">All Bookings</CardTitle>
           </CardHeader>
           <CardContent className="p-6">
-            {activity.bookings.length > 0 ? (
+            {activity.Booking.length > 0 ? (
               <div className="space-y-4">
-                {activity.bookings.map((booking) => (
+                {activity.Booking.map((booking) => (
                   <div
                     key={booking.id}
                     className="border-2 border-gray-100 rounded-xl p-5 hover:border-green-200 transition-colors"
@@ -192,26 +192,26 @@ export default async function ActivityBookingsPage({
                       {/* Guest Info */}
                       <div className="flex items-start gap-4 flex-1">
                         <div className="relative h-12 w-12 rounded-full overflow-hidden bg-gradient-to-br from-green-500 to-emerald-600 flex items-center justify-center flex-shrink-0">
-                          {booking.user.image ? (
+                          {booking.User.image ? (
                             <Image
-                              src={booking.user.image}
-                              alt={booking.user.name || "Guest"}
+                              src={booking.User.image}
+                              alt={booking.User.name || "Guest"}
                               fill
                               className="object-cover"
                             />
                           ) : (
                             <span className="text-lg font-bold text-white">
-                              {booking.user.name?.charAt(0) || "G"}
+                              {booking.User.name?.charAt(0) || "G"}
                             </span>
                           )}
                         </div>
                         <div className="flex-1">
                           <div className="flex items-start justify-between mb-3">
                             <div>
-                              <h3 className="font-semibold text-lg">{booking.user.name}</h3>
+                              <h3 className="font-semibold text-lg">{booking.User.name}</h3>
                               <div className="flex items-center gap-2 text-sm text-gray-600 mt-1">
                                 <Mail className="h-3 w-3" />
-                                {booking.user.email}
+                                {booking.User.email}
                               </div>
                             </div>
                             <div className="text-right">
