@@ -167,7 +167,7 @@ export default async function BookingConfirmationPage({
                     </div>
                     <div className="flex items-center gap-2 text-gray-600">
                       <MapPin className="h-4 w-4 text-green-600" />
-                      <span>{booking.activity.location}</span>
+                      <span>{booking.Activity.location}</span>
                     </div>
                     <div className="flex items-center gap-2 text-gray-600">
                       <Users className="h-4 w-4 text-green-600" />
@@ -191,7 +191,7 @@ export default async function BookingConfirmationPage({
               <div className="space-y-3">
                 <div className="flex justify-between text-gray-600">
                   <span>
-                    ${booking.activity.price} × {booking.participants} {booking.participants === 1 ? 'person' : 'people'}
+                    ${booking.Activity.price} × {booking.participants} {booking.participants === 1 ? 'person' : 'people'}
                   </span>
                   <span className="font-medium">${booking.totalPrice}</span>
                 </div>
@@ -211,22 +211,22 @@ export default async function BookingConfirmationPage({
             <CardContent className="p-6">
               <div className="flex items-center gap-4">
                 <div className="relative h-16 w-16 rounded-full overflow-hidden bg-gradient-to-br from-green-500 to-emerald-600 flex items-center justify-center">
-                  {booking.activity.host.image ? (
+                  {booking.Activity.host.image ? (
                     <Image
-                      src={booking.activity.host.image}
-                      alt={booking.activity.host.name || "Host"}
+                      src={booking.Activity.host.image}
+                      alt={booking.Activity.host.name || "Host"}
                       fill
                       className="object-cover"
                     />
                   ) : (
                     <span className="text-2xl font-bold text-white">
-                      {booking.activity.host.name?.charAt(0) || "H"}
+                      {booking.Activity.host.name?.charAt(0) || "H"}
                     </span>
                   )}
                 </div>
                 <div>
-                  <p className="font-semibold text-lg">{booking.activity.host.name}</p>
-                  <p className="text-sm text-gray-600">{booking.activity.host.email}</p>
+                  <p className="font-semibold text-lg">{booking.Activity.host.name}</p>
+                  <p className="text-sm text-gray-600">{booking.Activity.host.email}</p>
                 </div>
               </div>
             </CardContent>
