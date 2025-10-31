@@ -27,7 +27,7 @@ export default function AboutPage() {
               About movinature
             </h1>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
-              We're on a mission to reconnect families with the great outdoors, one adventure at a time.
+              We&apos;re on a mission to reconnect families with the great outdoors, one adventure at a time.
             </p>
           </div>
         </FadeIn>
@@ -154,20 +154,20 @@ export default function AboutPage() {
                 <p>
                   movinature was born from a simple observation: kids today spend less time outdoors than
                   any previous generation. As parents and outdoor enthusiasts ourselves, we saw firsthand
-                  how transformative nature experiences could be for children's development, health, and happiness.
+                  how transformative nature experiences could be for children&apos;s development, health, and happiness.
                 </p>
                 <p>
-                  We also noticed that finding quality, safe, and engaging outdoor activities for kids wasn't
+                  We also noticed that finding quality, safe, and engaging outdoor activities for kids wasn&apos;t
                   always easy. Parents wanted trusted recommendations, while talented outdoor educators and
                   guides struggled to reach families who would benefit most from their programs.
                 </p>
                 <p>
-                  That's why we created movinature - a platform that connects families with vetted outdoor
+                  That&apos;s why we created movinature - a platform that connects families with vetted outdoor
                   activity providers, making it easy to discover and book adventures that inspire kids to
                   explore, learn, and grow in nature.
                 </p>
                 <p className="font-semibold text-gray-900">
-                  Today, we're proud to partner with passionate hosts across the country who share our mission
+                  Today, we&apos;re proud to partner with passionate hosts across the country who share our mission
                   of helping the next generation develop a lifelong connection with the natural world.
                 </p>
               </div>
@@ -180,8 +180,8 @@ export default function AboutPage() {
           <div className="mt-16 text-center">
             <h2 className="text-3xl font-bold mb-4">Join Our Community</h2>
             <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
-              Whether you're a parent looking for outdoor adventures or a guide wanting to share your passion,
-              we'd love to have you join the movinature family.
+              Whether you&apos;re a parent looking for outdoor adventures or a guide wanting to share your passion,
+              we&apos;d love to have you join the movinature family.
             </p>
           </div>
         </FadeIn>
