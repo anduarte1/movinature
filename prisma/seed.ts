@@ -248,6 +248,49 @@ async function main() {
   }
 
   console.log(`✅ Seeded ${activities.length} activities`)
+
+  // Create availability slots for the next 30 days
+  const today = new Date()
+  const availabilitySlots = []
+
+  for (const activity of activities) {
+    for (let dayOffset = 0; dayOffset < 30; dayOffset++) {
+      const date = new Date(today)
+      date.setDate(date.getDate() + dayOffset)
+      date.setHours(0, 0, 0, 0)
+
+      // Add 2-3 time slots per day depending on activity
+      const timeSlots = [
+        { startTime: '09:00', endTime: '11:00' },
+        { startTime: '14:00', endTime: '16:00' },
+      ]
+
+      // Add evening slot for shorter activities
+      if (activity.duration <= 120) {
+        timeSlots.push({ startTime: '18:00', endTime: '20:00' })
+      }
+
+      for (const slot of timeSlots) {
+        availabilitySlots.push({
+          id: randomUUID(),
+          activityId: activity.id,
+          date,
+          startTime: slot.startTime,
+          endTime: slot.endTime,
+          capacity: activity.capacity,
+          booked: 0,
+        })
+      }
+    }
+  }
+
+  // Use createMany for faster bulk insert (skip duplicates)
+  await prisma.availability.createMany({
+    data: availabilitySlots,
+    skipDuplicates: true,
+  })
+
+  console.log(`✅ Seeded ${availabilitySlots.length} availability slots`)
   console.log('\n🎉 Database seeding completed successfully!')
   console.log(`\nDemo credentials:`)
   console.log(`Email: demo-host@movinature.com`)
