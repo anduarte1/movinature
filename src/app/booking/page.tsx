@@ -1,8 +1,6 @@
 "use client";
 
-export const dynamic = 'force-dynamic';
-
-import { useState } from "react";
+import { useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -20,7 +18,7 @@ import { api } from "@convex/_generated/api";
 import { Id } from "@convex/_generated/dataModel";
 import { useUser } from "@clerk/nextjs";
 
-export default function BookingPage() {
+function BookingContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const activityId = searchParams.get("activity") as Id<"activities"> | null;
@@ -475,5 +473,20 @@ export default function BookingPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function BookingPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#2E7D32] mx-auto"></div>
+          <p className="mt-4 text-gray-600">Carregando...</p>
+        </div>
+      </div>
+    }>
+      <BookingContent />
+    </Suspense>
   );
 }
