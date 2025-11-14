@@ -2,14 +2,14 @@
 
 import { useUser } from "@clerk/nextjs";
 import { useQuery } from "convex/react";
-import { api } from "../../../convex/_generated/api";
+import { api } from "@convex/_generated/api";
 import { DashboardSidebar } from "@/components/dashboard/DashboardSidebar";
 import { BookingCard } from "@/components/dashboard/BookingCard";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { Compass } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { Id } from "../../../convex/_generated/dataModel";
+import { Id } from "@convex/_generated/dataModel";
 
 export default function BookingsPage() {
   const { user, isSignedIn, isLoaded } = useUser();

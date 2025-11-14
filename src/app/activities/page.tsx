@@ -1,15 +1,15 @@
 "use client";
 
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { FavoriteButton } from "@/components/FavoriteButton";
 import { Heart, Star, Grid3x3, List, ChevronLeft, ChevronRight, ChevronDown } from "lucide-react";
 import { useQuery } from "convex/react";
-import { api } from "../../../convex/_generated/api";
+import { api } from "@convex/_generated/api";
 
-export default function ActivitiesPage() {
+function ActivitiesPageContent() {
   const searchParams = useSearchParams();
 
   // Get search parameters from URL
@@ -18,7 +18,7 @@ export default function ActivitiesPage() {
   const urlCategory = searchParams.get("category") || "";
 
   // Fetch activities from Convex
-  const allActivities = useQuery(api.activities.list);
+  const allActivities = useQuery(api.activities.list, {});
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [sortBy, setSortBy] = useState("popularity");
   const [activityFilters, setActivityFilters] = useState({
@@ -460,5 +460,13 @@ export default function ActivitiesPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function ActivitiesPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-gray-50 flex items-center justify-center"><div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#2A9D8F]"></div></div>}>
+      <ActivitiesPageContent />
+    </Suspense>
   );
 }

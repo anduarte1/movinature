@@ -87,6 +87,7 @@ export const getById = query({
         location: activity.location,
         images: activity.images,
         description: activity.description,
+        price: activity.price,
         hostId: activity.hostId,
         host: {
           name: host?.name || "Unknown Host",

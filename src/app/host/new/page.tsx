@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useUser } from "@clerk/nextjs";
 import { useQuery } from "convex/react";
-import { api } from "../../../../convex/_generated/api";
+import { api } from "@convex/_generated/api";
 import { CreateActivityForm } from "@/components/create-activity-form";
 
 export default function NewActivityPage() {
@@ -53,7 +53,10 @@ export default function NewActivityPage() {
           </p>
         </div>
 
-        <CreateActivityForm categories={categories} userId={currentUser._id} />
+        <CreateActivityForm
+          categories={categories.map(cat => ({ id: cat._id, name: cat.name, slug: cat.slug }))}
+          userId={currentUser._id}
+        />
       </div>
     </div>
   );
