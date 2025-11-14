@@ -1,18 +1,15 @@
 "use client";
 
 import { useUser } from "@clerk/nextjs";
-import { useQuery } from "convex/react";
-import { api } from "../../../convex/_generated/api";
+import { useRouter } from "next/navigation";
 import { DashboardSidebar } from "@/components/dashboard/DashboardSidebar";
 import { BookingCard } from "@/components/dashboard/BookingCard";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { Compass } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { Id } from "../../../convex/_generated/dataModel";
+import { CheckCircle } from "lucide-react";
 
-export default function BookingsPage() {
-  const { user, isSignedIn, isLoaded } = useUser();
+export default function PastBookingsPage() {
+  const { isSignedIn, isLoaded } = useUser();
   const router = useRouter();
 
   // Redirect if not signed in
@@ -31,10 +28,10 @@ export default function BookingsPage() {
   // Mock empty array until we have user sync
   const bookings: any[] = [];
 
-  // Filter for upcoming bookings (date >= today)
+  // Filter for past bookings (date < today)
   const today = Date.now();
-  const upcomingBookings =
-    bookings?.filter((booking) => booking.date >= today) || [];
+  const pastBookings =
+    bookings?.filter((booking) => booking.date < today) || [];
 
   if (!isLoaded) {
     return (
@@ -43,7 +40,7 @@ export default function BookingsPage() {
         <main className="flex-1 p-8 flex items-center justify-center">
           <div className="text-center">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
-            <p className="mt-4 text-gray-600">Carregando suas reservas...</p>
+            <p className="mt-4 text-gray-600">Carregando suas reservas passadas...</p>
           </div>
         </main>
       </div>
@@ -61,13 +58,13 @@ export default function BookingsPage() {
               href="/"
               className="text-gray-600 dark:text-gray-400 text-base font-medium leading-normal hover:underline"
             >
-              Dashboard
+              Painel
             </Link>
             <span className="text-gray-600 dark:text-gray-400 text-base font-medium leading-normal">
               /
             </span>
             <span className="text-gray-900 dark:text-white text-base font-medium leading-normal">
-              Próximas Reservas
+              Reservas Passadas
             </span>
           </div>
 
@@ -75,40 +72,38 @@ export default function BookingsPage() {
           <div className="flex flex-wrap justify-between gap-3 mb-8">
             <div className="flex flex-col gap-2">
               <h1 className="text-gray-900 dark:text-white text-4xl font-black leading-tight tracking-[-0.033em]">
-                Próximas Reservas
+                Reservas Passadas
               </h1>
               <p className="text-gray-600 dark:text-gray-400 text-base font-normal leading-normal">
-                Aqui estão as atividades que você agendou. Que as aventuras
-                comecem!
+                Revise suas aventuras concluídas e compartilhe suas experiências
               </p>
             </div>
           </div>
 
           {/* Bookings List */}
-          {upcomingBookings.length > 0 ? (
+          {pastBookings.length > 0 ? (
             <div className="flex flex-col gap-6">
-              {upcomingBookings.map((booking) => (
+              {pastBookings.map((booking) => (
                 <BookingCard key={booking._id} booking={booking} />
               ))}
             </div>
           ) : (
             /* Empty State */
             <div className="flex flex-col items-center justify-center gap-6 rounded-xl bg-white dark:bg-surface-dark p-12 text-center shadow-sm border border-gray-100 dark:border-gray-800">
-              <Compass className="h-16 w-16 text-primary" />
+              <CheckCircle className="h-16 w-16 text-primary" />
               <div className="flex flex-col gap-2">
                 <p className="text-gray-900 dark:text-white text-xl font-bold">
-                  Ainda sem próximas reservas
+                  Nenhuma reserva passada
                 </p>
                 <p className="text-gray-600 dark:text-gray-400 max-w-sm">
-                  Parece que seu calendário está vazio. Hora de planejar sua próxima
-                  aventura em família!
+                  Suas aventuras concluídas aparecerão aqui. Comece a explorar!
                 </p>
               </div>
               <Button
                 asChild
                 className="bg-primary text-white hover:bg-primary/90"
               >
-                <Link href="/activities">Encontrar Atividades</Link>
+                <Link href="/activities">Descobrir Atividades</Link>
               </Button>
             </div>
           )}

@@ -1,50 +1,59 @@
-import { redirect } from "next/navigation"
-import { auth } from "@/auth"
-import { prisma } from "@/lib/prisma"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import { Calendar, MapPin, Users, Clock, CheckCircle, DollarSign, Home } from "lucide-react"
-import Image from "next/image"
-import Link from "next/link"
+"use client";
 
-export default async function BookingConfirmationPage({
-  params,
-}: {
-  params: Promise<{ id: string }>
-}) {
-  const { id } = await params
-  const session = await auth()
+import { useParams, useRouter } from "next/navigation";
+import { useUser } from "@clerk/nextjs";
+import { useQuery } from "convex/react";
+import { api } from "../../../../convex/_generated/api";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Calendar, MapPin, Users, Clock, CheckCircle, DollarSign, Home } from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
+import { Id } from "../../../../convex/_generated/dataModel";
 
-  if (!session?.user?.id) {
-    redirect("/api/auth/signin")
+export default function BookingDetailsPage() {
+  const params = useParams();
+  const router = useRouter();
+  const { isSignedIn, isLoaded } = useUser();
+  const bookingId = params.id as Id<"bookings">;
+
+  // Redirect if not signed in
+  if (isLoaded && !isSignedIn) {
+    router.push("/sign-in");
+    return null;
   }
 
-  const booking = await prisma.booking.findUnique({
-    where: { id },
-    include: {
-      Activity: {
-        include: {
-          Category: true,
-          User: {
-            select: {
-              name: true,
-              email: true,
-              image: true,
-            },
-          },
-        },
-      },
-    },
-  })
+  // Fetch booking details
+  const booking = useQuery(
+    api.bookings.getById,
+    bookingId ? { id: bookingId } : "skip"
+  );
 
+  // Loading state
+  if (!isLoaded || booking === undefined) {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-green-50/30 via-white to-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
+          <p className="mt-4 text-gray-600">Carregando detalhes da reserva...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Not found
   if (!booking) {
-    redirect("/bookings")
-  }
-
-  // Check if user is authorized to view this booking
-  if (booking.userId !== session.user.id) {
-    redirect("/bookings")
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-green-50/30 via-white to-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <h2 className="text-2xl font-bold mb-4">Reserva Não Encontrada</h2>
+          <Button asChild>
+            <Link href="/bookings">Voltar para Reservas</Link>
+          </Button>
+        </div>
+      </div>
+    );
   }
 
   const getStatusDetails = (status: string) => {
@@ -53,37 +62,37 @@ export default async function BookingConfirmationPage({
         return {
           color: "bg-green-500",
           icon: CheckCircle,
-          message: "Your booking has been confirmed!",
-        }
+          message: "Sua reserva foi confirmada!",
+        };
       case "PENDING":
         return {
           color: "bg-yellow-500",
           icon: Clock,
-          message: "Your booking is pending confirmation",
-        }
+          message: "Sua reserva está aguardando confirmação",
+        };
       case "CANCELLED":
         return {
           color: "bg-red-500",
           icon: Clock,
-          message: "This booking has been cancelled",
-        }
+          message: "Esta reserva foi cancelada",
+        };
       case "COMPLETED":
         return {
           color: "bg-blue-500",
           icon: CheckCircle,
-          message: "This activity has been completed",
-        }
+          message: "Esta atividade foi concluída",
+        };
       default:
         return {
           color: "bg-gray-500",
           icon: Clock,
-          message: "Booking status unknown",
-        }
+          message: "Status da reserva desconhecido",
+        };
     }
-  }
+  };
 
-  const statusDetails = getStatusDetails(booking.status)
-  const StatusIcon = statusDetails.icon
+  const statusDetails = getStatusDetails(booking.status);
+  const StatusIcon = statusDetails.icon;
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-green-50/30 via-white to-gray-50">
@@ -95,11 +104,11 @@ export default async function BookingConfirmationPage({
           </div>
           <h1 className="text-4xl md:text-5xl font-extrabold mb-4">
             <span className="bg-gradient-to-r from-emerald-600 via-green-600 to-teal-600 bg-clip-text text-transparent">
-              Booking Confirmed!
+              Reserva Confirmada!
             </span>
           </h1>
           <p className="text-xl text-gray-600">
-            Your adventure awaits. We&apos;ve sent confirmation details to your email.
+            Sua aventura está te esperando. Enviamos os detalhes da confirmação para seu e-mail.
           </p>
         </div>
 
@@ -123,15 +132,15 @@ export default async function BookingConfirmationPage({
           {/* Activity Details */}
           <Card className="border-2 border-green-100">
             <CardHeader className="border-b border-green-50">
-              <CardTitle className="text-2xl">Activity Details</CardTitle>
+              <CardTitle className="text-2xl">Detalhes da Atividade</CardTitle>
             </CardHeader>
             <CardContent className="p-6">
               <div className="flex gap-6">
                 {/* Activity Image */}
                 <div className="relative h-48 w-64 rounded-xl overflow-hidden flex-shrink-0">
                   <Image
-                    src={booking.Activity.images[0] || "/placeholder.jpg"}
-                    alt={booking.Activity.title}
+                    src={booking.activity.images?.[0] || "/placeholder.jpg"}
+                    alt={booking.activity.title}
                     fill
                     className="object-cover"
                   />
@@ -140,12 +149,9 @@ export default async function BookingConfirmationPage({
                 {/* Activity Info */}
                 <div className="flex-1 space-y-4">
                   <div>
-                    <h3 className="text-2xl font-bold mb-2">{booking.Activity.title}</h3>
-                    <Badge variant="outline" className="mb-3">
-                      {booking.Activity.Category.name}
-                    </Badge>
+                    <h3 className="text-2xl font-bold mb-2">{booking.activity.title}</h3>
                     <p className="text-gray-600 line-clamp-3">
-                      {booking.Activity.description}
+                      {booking.activity.description}
                     </p>
                   </div>
 
@@ -153,25 +159,30 @@ export default async function BookingConfirmationPage({
                     <div className="flex items-center gap-2 text-gray-600">
                       <Calendar className="h-4 w-4 text-green-600" />
                       <span className="font-medium">
-                        {new Date(booking.date).toLocaleDateString('en-US', {
-                          weekday: 'long',
-                          year: 'numeric',
-                          month: 'long',
-                          day: 'numeric',
+                        {new Date(booking.date).toLocaleDateString("en-US", {
+                          weekday: "long",
+                          year: "numeric",
+                          month: "long",
+                          day: "numeric",
                         })}
                       </span>
                     </div>
                     <div className="flex items-center gap-2 text-gray-600">
                       <Clock className="h-4 w-4 text-green-600" />
-                      <span>{booking.startTime} - {booking.endTime}</span>
+                      <span>
+                        {booking.startTime} - {booking.endTime}
+                      </span>
                     </div>
                     <div className="flex items-center gap-2 text-gray-600">
                       <MapPin className="h-4 w-4 text-green-600" />
-                      <span>{booking.Activity.location}</span>
+                      <span>{booking.activity.location}</span>
                     </div>
                     <div className="flex items-center gap-2 text-gray-600">
                       <Users className="h-4 w-4 text-green-600" />
-                      <span>{booking.participants} {booking.participants === 1 ? 'participant' : 'participants'}</span>
+                      <span>
+                        {booking.participants}{" "}
+                        {booking.participants === 1 ? "participante" : "participantes"}
+                      </span>
                     </div>
                   </div>
                 </div>
@@ -184,14 +195,15 @@ export default async function BookingConfirmationPage({
             <CardHeader className="border-b border-green-50">
               <CardTitle className="flex items-center gap-2">
                 <DollarSign className="h-5 w-5 text-green-600" />
-                Pricing Details
+                Detalhes do Preço
               </CardTitle>
             </CardHeader>
             <CardContent className="p-6">
               <div className="space-y-3">
                 <div className="flex justify-between text-gray-600">
                   <span>
-                    ${booking.Activity.price} × {booking.participants} {booking.participants === 1 ? 'person' : 'people'}
+                    ${booking.activity.price} × {booking.participants}{" "}
+                    {booking.participants === 1 ? "pessoa" : "pessoas"}
                   </span>
                   <span className="font-medium">${booking.totalPrice}</span>
                 </div>
@@ -206,27 +218,29 @@ export default async function BookingConfirmationPage({
           {/* Host Information */}
           <Card className="border-2 border-green-100">
             <CardHeader className="border-b border-green-50">
-              <CardTitle>Your Host</CardTitle>
+              <CardTitle>Seu Anfitrião</CardTitle>
             </CardHeader>
             <CardContent className="p-6">
               <div className="flex items-center gap-4">
                 <div className="relative h-16 w-16 rounded-full overflow-hidden bg-gradient-to-br from-green-500 to-emerald-600 flex items-center justify-center">
-                  {booking.Activity.User.image ? (
+                  {booking.activity.host?.image ? (
                     <Image
-                      src={booking.Activity.User.image}
-                      alt={booking.Activity.User.name || "Host"}
+                      src={booking.activity.host.image}
+                      alt={booking.activity.host.name || "Anfitrião"}
                       fill
                       className="object-cover"
                     />
                   ) : (
                     <span className="text-2xl font-bold text-white">
-                      {booking.Activity.User.name?.charAt(0) || "H"}
+                      {booking.activity.host?.name?.charAt(0) || "A"}
                     </span>
                   )}
                 </div>
                 <div>
-                  <p className="font-semibold text-lg">{booking.Activity.User.name}</p>
-                  <p className="text-sm text-gray-600">{booking.Activity.User.email}</p>
+                  <p className="font-semibold text-lg">
+                    {booking.activity.host?.name || "Anfitrião"}
+                  </p>
+                  <p className="text-sm text-gray-600">Anfitrião da Atividade</p>
                 </div>
               </div>
             </CardContent>
@@ -241,7 +255,7 @@ export default async function BookingConfirmationPage({
             >
               <Link href="/bookings">
                 <Home className="h-5 w-5 mr-2" />
-                View All Bookings
+                Ver Todas as Reservas
               </Link>
             </Button>
             <Button
@@ -250,18 +264,16 @@ export default async function BookingConfirmationPage({
               className="flex-1 border-2 border-green-200 hover:border-green-400"
               asChild
             >
-              <Link href="/activities">
-                Browse More Activities
-              </Link>
+              <Link href="/activities">Explorar Mais Atividades</Link>
             </Button>
           </div>
 
           {/* Booking ID Reference */}
           <div className="text-center text-sm text-gray-500 pt-4">
-            Booking Reference: <span className="font-mono font-medium">{booking.id}</span>
+            Referência da Reserva: <span className="font-mono font-medium">{booking._id}</span>
           </div>
         </div>
       </div>
     </div>
-  )
+  );
 }

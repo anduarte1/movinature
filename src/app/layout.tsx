@@ -3,6 +3,8 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Navbar } from "@/components/navbar";
 import { GoogleAnalytics } from "@/components/analytics/google-analytics";
+import { ConvexClientProvider } from "./ConvexClientProvider";
+import { StoreUserEffect } from "@/components/StoreUserEffect";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -81,9 +83,12 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <GoogleAnalytics gaId={gaId} />
-        <Navbar />
-        <main>{children}</main>
+        <ConvexClientProvider>
+          <StoreUserEffect />
+          <GoogleAnalytics gaId={gaId} />
+          <Navbar />
+          <main>{children}</main>
+        </ConvexClientProvider>
       </body>
     </html>
   );

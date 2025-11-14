@@ -1,20 +1,47 @@
-import { redirect } from "next/navigation"
-import { auth } from "@/auth"
-import { prisma } from "@/lib/prisma"
-import { CreateActivityForm } from "@/components/create-activity-form"
+"use client";
 
-export default async function NewActivityPage() {
-  const session = await auth()
+import { useRouter } from "next/navigation";
+import { useUser } from "@clerk/nextjs";
+import { useQuery } from "convex/react";
+import { api } from "../../../../convex/_generated/api";
+import { CreateActivityForm } from "@/components/create-activity-form";
 
-  if (!session?.user?.id) {
-    redirect("/api/auth/signin")
+export default function NewActivityPage() {
+  const router = useRouter();
+  const { user, isSignedIn, isLoaded } = useUser();
+
+  // Redirect if not signed in
+  if (isLoaded && !isSignedIn) {
+    router.push("/sign-in");
+    return null;
   }
 
-  const categories = await prisma.category.findMany({
-    orderBy: {
-      name: 'asc',
-    },
-  })
+  // Fetch categories and current user
+  const categories = useQuery(api.categories.list);
+  const currentUser = useQuery(api.users.getCurrentUser);
+
+  // Loading state
+  if (!isLoaded || categories === undefined || currentUser === undefined) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
+          <p className="mt-4 text-gray-600">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Check if user is properly loaded
+  if (!currentUser) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-gray-600">Please sign out and sign back in.</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background">
@@ -26,8 +53,8 @@ export default async function NewActivityPage() {
           </p>
         </div>
 
-        <CreateActivityForm categories={categories} userId={session.user.id} />
+        <CreateActivityForm categories={categories} userId={currentUser._id} />
       </div>
     </div>
-  )
+  );
 }
