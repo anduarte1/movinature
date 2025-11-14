@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "vercel-build": "npx convex deploy && npm run build"
+    "vercel-build": "npx convex deploy && npx convex codegen && npm run build"
   },
   "prisma": {
     "seed": "ts-node --compiler-options {\"module\":\"CommonJS\"} prisma/seed.ts"
